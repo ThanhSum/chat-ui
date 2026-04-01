@@ -13,13 +13,23 @@ import { ChatService } from '../../../services/chat.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="border-t border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-700 dark:bg-gray-900">
-      <div class="mx-auto w-full max-w-2xl">
+      <div class="mx-auto w-full min-w-0 max-w-2xl">
 
       @if (chat.error()) {
-        <div class="mb-3 flex items-start gap-2 rounded-lg border border-red-300 bg-red-50 px-4 py-2 text-sm text-red-800 dark:border-red-700 dark:bg-red-900/50 dark:text-red-200">
-          <span class="mt-0.5 text-red-500 dark:text-red-400">&#9888;</span>
-          <span class="flex-1">{{ chat.error() }}</span>
-          <button (click)="chat.error.set(null)" class="ml-2 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-200">&#10005;</button>
+        <div
+          class="mb-3 flex min-w-0 max-w-full items-start gap-2 overflow-hidden rounded-lg border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-800 dark:border-red-700 dark:bg-red-900/50 dark:text-red-200"
+        >
+          <span class="mt-0.5 shrink-0 text-red-500 dark:text-red-400">&#9888;</span>
+          <span
+            class="max-h-48 min-w-0 flex-1 overflow-y-auto break-all whitespace-pre-wrap leading-relaxed"
+          >{{ chat.error() }}</span>
+          <button
+            type="button"
+            (click)="chat.error.set(null)"
+            class="ml-1 shrink-0 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-200"
+          >
+            &#10005;
+          </button>
         </div>
       }
 
