@@ -11,18 +11,16 @@ A full-featured AI chat interface built with Angular 18, supporting multiple AI 
 ## Setup
 
 ```bash
-mkdir chat-ui && cd chat-ui
-npm install -g @angular/cli@latest
-ng new chat-ui --routing=false --style=scss --standalone=true --skip-git=true
+git clone <REPO_URL> chat-ui
 cd chat-ui
-npm install tailwindcss @tailwindcss/typography postcss autoprefixer
-npm install @types/node
-npm install marked highlight.js
-npm install openai @anthropic-ai/sdk @google/generative-ai groq-sdk
-npm install @angular/cdk @angular/animations
-npm install @tailwindcss/postcss
-npx tailwindcss init -p
+
+npm install
 ```
+
+## Notes
+
+- **Standalone Angular app**: Standalone application structure is new and not yet supported by many existing `ng add` and `ng update` integrations with community libraries.
+- **Tailwind CLI**: If you see `npm error could not determine executable to run` for `npm exec tailwindcss init -p`, that’s expected with Tailwind v4+ (the `tailwindcss` package no longer exposes a `tailwindcss` binary). This repo is already configured; you don’t need to run `tailwindcss init`.
 
 ## Run
 
