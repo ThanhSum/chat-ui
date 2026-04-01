@@ -13,6 +13,7 @@ import { ChatService } from '../../../services/chat.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="border-t border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-700 dark:bg-gray-900">
+      <div class="mx-auto w-full max-w-2xl">
 
       @if (chat.error()) {
         <div class="mb-3 flex items-start gap-2 rounded-lg border border-red-300 bg-red-50 px-4 py-2 text-sm text-red-800 dark:border-red-700 dark:bg-red-900/50 dark:text-red-200">
@@ -28,7 +29,7 @@ import { ChatService } from '../../../services/chat.service';
         </div>
       }
 
-      <div class="flex items-end gap-3 rounded-2xl border border-gray-300 bg-white px-4 py-3 transition-colors focus-within:border-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:focus-within:border-gray-500">
+      <div class="flex items-center gap-3 rounded-2xl border border-gray-300 bg-white px-4 py-2.5 transition-colors focus-within:border-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:focus-within:border-gray-500">
         <textarea
           #textarea
           [(ngModel)]="inputText"
@@ -37,7 +38,7 @@ import { ChatService } from '../../../services/chat.service';
           [disabled]="chat.isStreaming()"
           placeholder="Message..."
           rows="1"
-          class="max-h-48 flex-1 resize-none overflow-y-auto bg-transparent text-sm leading-relaxed text-gray-900 outline-none placeholder:text-gray-400 disabled:opacity-50 dark:text-gray-100 dark:placeholder:text-gray-500"
+          class="max-h-48 min-h-10 flex-1 resize-none overflow-y-auto bg-transparent py-2 text-sm leading-normal text-gray-900 outline-none placeholder:text-gray-400 disabled:opacity-50 dark:text-gray-100 dark:placeholder:text-gray-500"
         ></textarea>
 
         @if (chat.isStreaming()) {
@@ -65,6 +66,7 @@ import { ChatService } from '../../../services/chat.service';
       <p class="mt-2 text-center text-xs text-gray-500 dark:text-gray-600">
         AI can make mistakes. Verify important info.
       </p>
+      </div>
     </div>
   `,
 })

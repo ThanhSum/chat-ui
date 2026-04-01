@@ -16,8 +16,9 @@ import { MessageBubbleComponent } from '../message-bubble/message-bubble.compone
       #scrollContainer
       class="flex-1 overflow-y-auto py-4"
     >
+      <div class="mx-auto w-full max-w-2xl px-4">
       @if (!chat.activeConversation() || chat.activeConversation()!.messages.length === 0) {
-        <div class="flex min-h-64 flex-col items-center justify-center px-8 text-center select-none">
+        <div class="flex min-h-64 flex-col items-center justify-center px-4 text-center select-none">
           <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gray-200 text-3xl dark:bg-gray-700">
             &#128172;
           </div>
@@ -34,6 +35,7 @@ import { MessageBubbleComponent } from '../message-bubble/message-bubble.compone
           />
         }
       }
+      </div>
     </div>
   `,
 })

@@ -16,7 +16,7 @@ import { SettingsService } from '../../../services/settings.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div
-      class="group flex w-full px-4 py-3"
+      class="group flex w-full py-3"
       [class.justify-end]="message.role === 'user'"
       [class.justify-start]="message.role === 'assistant'"
     >
@@ -26,7 +26,7 @@ import { SettingsService } from '../../../services/settings.service';
         </div>
       }
 
-      <div class="flex flex-col max-w-[85%] min-w-0">
+      <div class="flex min-w-0 max-w-[min(100%,36rem)] flex-col">
         <div
           #bubbleEl
           class="prose prose-sm max-w-none rounded-2xl px-4 py-3 text-sm leading-relaxed
