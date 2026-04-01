@@ -30,7 +30,7 @@ import { ProviderName, PROVIDER_LABELS, STATIC_MODELS } from '../../../providers
         <label class="mb-1 block text-xs text-gray-500">Model</label>
         <select
           [ngModel]="chat.selectedModel()"
-          (ngModelChange)="chat.selectedModel.set($event)"
+          (ngModelChange)="onModelChange($event)"
           class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900
                  focus:border-blue-500 focus:outline-none
                  dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-gray-500"
@@ -64,5 +64,11 @@ export class ModelSelectorComponent {
     this.chat.selectedProvider.set(provider);
     const models = this.availableModels();
     this.chat.selectedModel.set(models[0] ?? '');
+    this.chat.applySelectionToActiveConversation();
+  }
+
+  onModelChange(model: string): void {
+    this.chat.selectedModel.set(model);
+    this.chat.applySelectionToActiveConversation();
   }
 }

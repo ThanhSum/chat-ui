@@ -74,6 +74,26 @@ export class ChatService {
   selectConversation(id: string): void {
     this.activeConversationId.set(id);
     this.error.set(null);
+    const conv = this.conversations().find(c => c.id === id);
+    if (conv) {
+      this.selectedProvider.set(conv.provider);
+      this.selectedModel.set(conv.model);
+    }
+  }
+
+  /** Keep the active conversation in sync with sidebar provider/model (used for the next send). */
+  applySelectionToActiveConversation(): void {
+    const id = this.activeConversationId();
+    if (id == null) return;
+    const p = this.selectedProvider();
+    const m = this.selectedModel();
+    this.updateConversation(id, c => ({
+      ...c,
+      provider: p,
+      model: m,
+      updatedAt: Date.now(),
+    }));
+    this.persist();
   }
 
   deleteConversation(id: string): void {
