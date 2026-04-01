@@ -1,0 +1,95 @@
+@import "tailwindcss";
+/* Manual theme toggle: dark:* utilities follow class .dark on an ancestor (not OS prefers-color-scheme). */
+@custom-variant dark (&:where(.dark, .dark *));
+@source "./**/*.ts";
+@source "./**/*.html";
+@plugin "@tailwindcss/typography";
+@import 'highlight.js/styles/github-dark.css';
+
+@theme {
+  --font-family-sans: 'Inter', system-ui, sans-serif;
+  --font-family-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+@layer base {
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: var(--font-family-sans);
+  }
+
+  html.dark body {
+    background-color: var(--color-gray-950, #030712);
+    color: var(--color-gray-100, #f3f4f6);
+  }
+
+  html:not(.dark) body {
+    background-color: var(--color-gray-50, #f9fafb);
+    color: var(--color-gray-900, #111827);
+  }
+
+  /* Font size preference: set on <html> so all Tailwind rem-based text-* utilities scale together. */
+  html.font-sm {
+    font-size: 14px;
+  }
+  html.font-md {
+    font-size: 16px;
+  }
+  html.font-lg {
+    font-size: 18px;
+  }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 9999px; }
+}
+
+@layer components {
+  .code-block-wrapper {
+    position: relative;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    margin: 0.75rem 0;
+    background-color: #1f2937;
+
+    .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.5rem 1rem;
+      background-color: #374151;
+      font-size: 0.75rem;
+      color: #9ca3af;
+    }
+
+    pre {
+      overflow-x: auto;
+      padding: 1rem;
+      margin: 0;
+      font-size: 0.875rem;
+      font-family: var(--font-family-mono);
+
+      code {
+        background: transparent;
+      }
+    }
+  }
+
+  .streaming-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1rem;
+    background-color: currentColor;
+    margin-left: 2px;
+    vertical-align: middle;
+    animation: blink 1s step-end infinite;
+  }
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}

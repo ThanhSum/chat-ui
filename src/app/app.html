@@ -1,0 +1,53 @@
+<div class="flex h-screen overflow-hidden bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
+
+  <!-- Sidebar -->
+  <aside class="w-64 flex-shrink-0 flex flex-col border-r border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-950">
+    <div class="flex-1 overflow-hidden flex flex-col min-h-0">
+      <app-conversation-list class="flex-1 min-h-0 flex flex-col overflow-hidden" />
+    </div>
+    <app-model-selector />
+
+    <div class="border-t border-gray-200 p-3 dark:border-gray-800">
+      <button
+        (click)="settingsOpen.set(true)"
+        class="w-full flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-600 transition-colors
+               hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+        Settings
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main chat area -->
+  <main class="flex min-w-0 flex-1 flex-col overflow-hidden">
+    <div class="flex flex-shrink-0 items-center gap-3 border-b border-gray-200 px-4 py-3 dark:border-gray-800">
+      @if (chat.activeConversation()) {
+        <div class="min-w-0 flex-1">
+          <h1 class="truncate text-sm font-medium text-gray-800 dark:text-gray-300">
+            {{ chat.activeConversation()!.title }}
+          </h1>
+          <p class="text-xs text-gray-500 dark:text-gray-500">
+            {{ chat.activeConversation()!.provider }} / {{ chat.activeConversation()!.model }}
+          </p>
+        </div>
+      } @else {
+        <div class="flex-1">
+          <h1 class="text-sm font-medium text-gray-500 dark:text-gray-500">No conversation selected</h1>
+        </div>
+      }
+    </div>
+
+    <app-message-list class="flex min-h-0 flex-1 flex-col overflow-hidden" />
+
+    <app-input-bar />
+  </main>
+
+  @if (settingsOpen()) {
+    <app-settings-panel (close)="settingsOpen.set(false)" />
+  }
+</div>

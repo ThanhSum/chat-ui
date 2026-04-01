@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="utf-8">
+  <script>
+    (function () {
+      try {
+        var raw = localStorage.getItem('chatui_settings');
+        var s = raw ? JSON.parse(raw) : {};
+        var root = document.documentElement;
+        if (s.darkMode === false) root.classList.remove('dark');
+        else root.classList.add('dark');
+        var fz = s.fontSize || 'md';
+        root.classList.remove('font-sm', 'font-md', 'font-lg');
+        root.classList.add('font-' + fz);
+      } catch (e) {
+        document.documentElement.classList.add('dark', 'font-md');
+      }
+    })();
+  </script>
+  <title>Chat UI</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body class="h-full">
+  <app-root></app-root>
+</body>
+</html>
