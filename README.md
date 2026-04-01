@@ -4,14 +4,46 @@ A full-featured AI chat interface built with Angular 18, supporting multiple AI 
 
 ## Prerequisites
 
-- Node 18+
-- Angular CLI (`npm install -g @angular/cli@latest`)
+- Node 18+ (recommend Node 20+)
+- Angular CLI (optional)
 - Ollama (optional — for local models)
+
+## Install prerequisites
+
+### Node.js
+
+- macOS (Homebrew):
+
+```bash
+brew install node
+node -v
+npm -v
+```
+
+- Or via nvm (recommended if you manage multiple Node versions):
+
+```bash
+nvm install --lts
+nvm use --lts
+node -v
+npm -v
+```
+
+### Angular CLI (optional)
+
+You can run this repo without a global Angular CLI by using `npx ng ...`.
+
+If you prefer installing it globally:
+
+```bash
+npm install -g @angular/cli@latest
+ng version
+```
 
 ## Setup
 
 ```bash
-git clone <REPO_URL> chat-ui
+git clone https://github.com/ThanhSum/chat-ui.git chat-ui
 cd chat-ui
 
 npm install
@@ -25,7 +57,7 @@ npm install
 ## Run
 
 ```bash
-ng serve
+npx ng serve
 ```
 
 Open [http://localhost:4200](http://localhost:4200).
