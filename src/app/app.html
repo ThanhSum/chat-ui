@@ -1,49 +1,74 @@
-<div class="flex h-screen overflow-hidden bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
+<div class="flex h-screen overflow-hidden bg-[#f5f5f5] text-gray-900 dark:bg-[#1a1a1a] dark:text-gray-100">
 
   <!-- Sidebar -->
-  <aside class="w-64 flex-shrink-0 flex flex-col border-r border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-950">
-    <div class="flex-1 overflow-hidden flex flex-col min-h-0">
-      <app-conversation-list class="flex-1 min-h-0 flex flex-col overflow-hidden" />
-    </div>
-    <app-model-selector />
+  <aside class="flex w-60 flex-shrink-0 flex-col bg-white dark:bg-[#111111]">
 
-    <div class="border-t border-gray-200 p-3 dark:border-gray-800">
-      <button
-        (click)="settingsOpen.set(true)"
-        class="w-full flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-600 transition-colors
-               hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200"
-      >
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+    <!-- Logo -->
+    <div class="flex items-center gap-3 px-4 pt-5 pb-4">
+      <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-black dark:bg-white">
+        <svg viewBox="0 0 24 24" class="h-5 w-5 text-white dark:text-black" fill="currentColor">
+          <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/>
         </svg>
-        Settings
+      </div>
+    </div>
+
+    <!-- Nav items -->
+    <nav class="px-2 space-y-0.5">
+      <button (click)="chat.newConversation()"
+              class="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5">
+        <div class="flex items-center gap-3">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+          </svg>
+          New Chat
+        </div>
+        <span class="text-xs text-gray-400">⌘N</span>
       </button>
+
+      <button (click)="settingsOpen.set(true)"
+              class="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5">
+        <div class="flex items-center gap-3">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+          Settings
+        </div>
+      </button>
+    </nav>
+
+    <!-- Conversation list -->
+    <div class="mt-4 border-t border-gray-100 pt-2 dark:border-white/5">
+      <app-conversation-list class="flex min-h-0 flex-1 flex-col overflow-hidden" />
+    </div>
+
+    <!-- Model selector at bottom -->
+    <div class="mt-auto">
+      <app-model-selector />
     </div>
   </aside>
 
-  <!-- Main chat area -->
+  <!-- Main area -->
   <main class="flex min-w-0 flex-1 flex-col overflow-hidden">
-    <div class="flex flex-shrink-0 items-center gap-3 border-b border-gray-200 px-4 py-3 dark:border-gray-800">
+
+    <!-- Top bar: model breadcrumb -->
+    <div class="flex flex-shrink-0 items-center gap-2 border-b border-gray-200/60 bg-white/80 px-4 py-2.5 backdrop-blur dark:border-white/5 dark:bg-[#111111]/80">
       @if (chat.activeConversation()) {
-        <div class="min-w-0 flex-1">
-          <h1 class="truncate text-sm font-medium text-gray-800 dark:text-gray-300">
-            {{ chat.activeConversation()!.title }}
-          </h1>
-          <p class="text-xs text-gray-500 dark:text-gray-500">
-            {{ chat.activeConversation()!.provider }} / {{ chat.activeConversation()!.model }}
-          </p>
-        </div>
+        <span class="text-xs text-gray-400 dark:text-gray-500">{{ chat.activeConversation()!.provider }}</span>
+        <span class="text-xs text-gray-300 dark:text-gray-600">/</span>
+        <span class="text-xs font-medium text-gray-700 dark:text-gray-300">{{ chat.activeConversation()!.model }}</span>
+        @if (chat.selectedProvider() === 'ollama') {
+          <span class="ml-1 h-1.5 w-1.5 rounded-full"
+                [class.bg-green-500]="chat.ollamaOnline()"
+                [class.bg-red-400]="!chat.ollamaOnline()"></span>
+        }
       } @else {
-        <div class="flex-1">
-          <h1 class="text-sm font-medium text-gray-500 dark:text-gray-500">No conversation selected</h1>
-        </div>
+        <span class="text-xs text-gray-400">Select a model to start</span>
       }
     </div>
 
     <app-message-list class="flex min-h-0 flex-1 flex-col overflow-hidden" />
-
     <app-input-bar />
   </main>
 

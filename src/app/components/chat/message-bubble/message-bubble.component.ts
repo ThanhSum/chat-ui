@@ -16,95 +16,95 @@ import { SettingsService } from '../../../services/settings.service';
   imports: [CommonModule, FormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="group flex w-full py-2"
-         [class.justify-end]="message.role === 'user'"
-         [class.justify-start]="message.role === 'assistant'">
+    <div class="group py-3"
+         [class.flex]="message.role === 'user'"
+         [class.justify-end]="message.role === 'user'">
 
       @if (message.role === 'assistant') {
-        <div class="mr-3 mt-1 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded border border-[#30363d] bg-[#161b22] text-[#8b949e]">
-          <svg viewBox="0 0 16 16" class="h-4 w-4" fill="currentColor">
-            <path d="M0 8C0 3.58 3.58 0 8 0s8 3.58 8 8-3.58 8-8 8S0 12.42 0 8Zm5.5-1.5a1 1 0 1 0 0 2 1 1 0 0 0 0-2Zm5 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2Zm-4.5 4a3.5 3.5 0 0 0 3.5 0 .75.75 0 1 0-.75-1.3 2 2 0 0 1-2 0A.75.75 0 1 0 6 10.5Z"/>
-          </svg>
-        </div>
-      }
-
-      <div class="flex min-w-0 max-w-[min(100%,36rem)] flex-col">
-
-        @if (editing()) {
-          <div class="rounded border border-[#388bfd] bg-white p-2 dark:bg-[#0d1117]">
-            <textarea [(ngModel)]="editText" rows="3"
-                      class="w-full resize-none bg-transparent text-sm text-gray-900 outline-none dark:text-gray-100"></textarea>
-            <div class="mt-1 flex justify-end gap-2">
-              <button (click)="cancelEdit()" class="rounded px-2 py-1 text-xs text-gray-500 hover:text-gray-800 dark:text-gray-400">Cancel</button>
-              <button (click)="saveEdit()" class="rounded bg-[#238636] px-2 py-1 text-xs text-white hover:bg-[#2ea043]">Save & Resend</button>
-            </div>
+        <!-- Assistant: full width, no bubble -->
+        <div class="flex items-start gap-3">
+          <div class="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-black dark:bg-white">
+            <svg viewBox="0 0 24 24" class="h-3.5 w-3.5 text-white dark:text-black" fill="currentColor">
+              <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/>
+            </svg>
           </div>
-        } @else {
-          <div #bubbleEl
-               class="prose prose-sm max-w-none rounded px-4 py-3 text-sm leading-relaxed
-                      prose-headings:scroll-mt-4 [&_li>p]:my-0 [&_ol]:my-2 [&_ul]:my-2"
-               [class.prose-invert]="message.role === 'assistant' && settings.settings().darkMode"
-               [class.prose-gray]="message.role === 'assistant' && !settings.settings().darkMode"
-               [class.bg-blue-600]="message.role === 'user'"
-               [class.text-white]="message.role === 'user'"
-               [class.rounded-br-sm]="message.role === 'user'"
-               [class.bg-[#161b22]]="message.role === 'assistant' && settings.settings().darkMode"
-               [class.border]="message.role === 'assistant'"
-               [class.border-[#30363d]]="message.role === 'assistant' && settings.settings().darkMode"
-               [class.bg-gray-100]="message.role === 'assistant' && !settings.settings().darkMode"
-               [class.border-gray-200]="message.role === 'assistant' && !settings.settings().darkMode"
-               [class.text-gray-900]="message.role === 'assistant' && !settings.settings().darkMode"
-               [class.text-[#e6edf3]]="message.role === 'assistant' && settings.settings().darkMode"
-               [class.rounded-bl-sm]="message.role === 'assistant'"
-               [innerHTML]="renderedHtml()"></div>
-        }
-
-        @if (isStreaming && message.role === 'assistant' && isLast) {
-          <div class="mt-1 flex items-center gap-1.5 text-xs text-gray-400 animate-pulse">
-            <span class="flex gap-0.5">
-              <span class="inline-block h-1 w-1 rounded-full bg-current animate-bounce" style="animation-delay:0ms"></span>
-              <span class="inline-block h-1 w-1 rounded-full bg-current animate-bounce" style="animation-delay:150ms"></span>
-              <span class="inline-block h-1 w-1 rounded-full bg-current animate-bounce" style="animation-delay:300ms"></span>
-            </span>
-            Generating…
-          </div>
-        }
-
-        @if (!editing()) {
-          <div class="mt-1 flex items-center gap-2 text-xs text-gray-400 opacity-0 transition-opacity group-hover:opacity-100 dark:text-gray-600"
-               [class.justify-end]="message.role === 'user'"
-               [class.justify-start]="message.role === 'assistant'">
-            <span>{{ formatTime(message.timestamp) }}</span>
-            @if (message.role === 'assistant' && message.durationMs) {
-              <span>· {{ (message.durationMs / 1000).toFixed(1) }}s</span>
+          <div class="min-w-0 flex-1">
+            @if (editing()) {
+              <div class="rounded-2xl border border-gray-200 bg-white p-3 dark:border-white/10 dark:bg-[#222]">
+                <textarea [(ngModel)]="editText" rows="3"
+                          class="w-full resize-none bg-transparent text-sm outline-none dark:text-gray-100"></textarea>
+                <div class="mt-2 flex justify-end gap-2">
+                  <button (click)="cancelEdit()" class="rounded px-2 py-1 text-xs text-gray-500">Cancel</button>
+                  <button (click)="saveEdit()" class="rounded bg-gray-900 px-2 py-1 text-xs text-white dark:bg-white dark:text-black">Save</button>
+                </div>
+              </div>
+            } @else {
+              <div #bubbleEl
+                   class="prose prose-sm max-w-none text-gray-800 dark:prose-invert dark:text-gray-200
+                          prose-headings:scroll-mt-4 [&_li>p]:my-0 [&_ol]:my-2 [&_ul]:my-2"
+                   [innerHTML]="renderedHtml()"></div>
             }
-            @if (message.role === 'user') {
+
+            @if (isStreaming && isLast) {
+              <div class="mt-2 flex items-center gap-1 text-xs text-gray-400">
+                <span class="flex gap-0.5">
+                  <span class="inline-block h-1 w-1 rounded-full bg-gray-400 animate-bounce" style="animation-delay:0ms"></span>
+                  <span class="inline-block h-1 w-1 rounded-full bg-gray-400 animate-bounce" style="animation-delay:150ms"></span>
+                  <span class="inline-block h-1 w-1 rounded-full bg-gray-400 animate-bounce" style="animation-delay:300ms"></span>
+                </span>
+              </div>
+            }
+
+            <!-- Actions -->
+            @if (!editing() && !isStreaming) {
+              <div class="mt-1.5 flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                <button (click)="copyMessage()"
+                        class="rounded-lg px-2 py-1 text-xs text-gray-400 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-white/5 dark:hover:text-gray-300">
+                  {{ copied() ? 'Copied' : 'Copy' }}
+                </button>
+                <button (click)="regenerate()"
+                        class="rounded-lg px-2 py-1 text-xs text-gray-400 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-white/5 dark:hover:text-gray-300">
+                  Retry
+                </button>
+                @if (message.durationMs) {
+                  <span class="text-xs text-gray-300 dark:text-gray-600">{{ (message.durationMs / 1000).toFixed(1) }}s</span>
+                }
+              </div>
+            }
+          </div>
+        </div>
+
+      } @else {
+        <!-- User: bubble on right -->
+        <div class="max-w-[75%]">
+          @if (editing()) {
+            <div class="rounded-2xl border border-gray-200 bg-white p-3 dark:border-white/10 dark:bg-[#222]">
+              <textarea [(ngModel)]="editText" rows="3"
+                        class="w-full resize-none bg-transparent text-sm outline-none dark:text-gray-100"></textarea>
+              <div class="mt-2 flex justify-end gap-2">
+                <button (click)="cancelEdit()" class="rounded px-2 py-1 text-xs text-gray-500">Cancel</button>
+                <button (click)="saveEdit()" class="rounded bg-gray-900 px-2 py-1 text-xs text-white dark:bg-white dark:text-black">Save & Resend</button>
+              </div>
+            </div>
+          } @else {
+            <div class="rounded-2xl bg-gray-100 px-4 py-3 text-sm text-gray-900 dark:bg-white/10 dark:text-gray-100">
+              {{ message.content }}
+            </div>
+            <div class="mt-1 flex justify-end items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
               <button (click)="startEdit()"
-                      class="rounded px-1.5 py-0.5 hover:bg-gray-200 hover:text-gray-800 dark:hover:bg-gray-700 dark:hover:text-gray-200">
+                      class="rounded-lg px-2 py-0.5 text-xs text-gray-400 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-white/5">
                 Edit
               </button>
-            }
-            <button (click)="copyMessage()"
-                    class="rounded px-1.5 py-0.5 hover:bg-gray-200 hover:text-gray-800 dark:hover:bg-gray-700 dark:hover:text-gray-200">
-              {{ copied() ? 'Copied!' : 'Copy' }}
-            </button>
-            @if (isLast && message.role === 'assistant') {
-              <button (click)="regenerate()"
-                      class="rounded px-1.5 py-0.5 hover:bg-gray-200 hover:text-gray-800 dark:hover:bg-gray-700 dark:hover:text-gray-200">
-                Retry
+              <button (click)="copyMessage()"
+                      class="rounded-lg px-2 py-0.5 text-xs text-gray-400 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-white/5">
+                {{ copied() ? 'Copied' : 'Copy' }}
               </button>
-            }
-            <button (click)="deleteMsg()"
-                    class="rounded px-1.5 py-0.5 hover:bg-gray-200 hover:text-red-600 dark:hover:bg-gray-700 dark:hover:text-red-400">
-              Delete
-            </button>
-          </div>
-        }
-      </div>
-
-      @if (message.role === 'user') {
-        <div class="ml-3 mt-1 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded bg-blue-600 text-xs font-bold text-white">
-          U
+              <button (click)="deleteMsg()"
+                      class="rounded-lg px-2 py-0.5 text-xs text-gray-400 hover:bg-gray-100 hover:text-red-500 dark:hover:bg-white/5">
+                Delete
+              </button>
+            </div>
+          }
         </div>
       }
     </div>
@@ -133,10 +133,6 @@ export class MessageBubbleComponent implements OnChanges, AfterViewInit {
   }
 
   ngAfterViewInit(): void { this.highlightCodeBlocks(); }
-
-  formatTime(ts: number): string {
-    return new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  }
 
   startEdit(): void { this.editText = this.message.content; this.editing.set(true); }
   saveEdit(): void {
@@ -184,9 +180,7 @@ export class MessageBubbleComponent implements OnChanges, AfterViewInit {
   private highlightCodeBlocks(): void {
     if (!this.bubbleEl) return;
     const el = this.bubbleEl.nativeElement;
-
     el.querySelectorAll('pre code').forEach(block => hljs.highlightElement(block as HTMLElement));
-
     el.querySelectorAll('.code-body').forEach(body => {
       if (body.querySelector('.line-gutter')) return;
       const code = body.querySelector('code');
@@ -198,7 +192,6 @@ export class MessageBubbleComponent implements OnChanges, AfterViewInit {
       gutter.innerHTML = lines.map((_, i) => `<span>${i + 1}</span>`).join('');
       body.prepend(gutter);
     });
-
     el.querySelectorAll('.copy-code-btn').forEach(btn => {
       const newBtn = btn.cloneNode(true) as HTMLElement;
       btn.parentNode?.replaceChild(newBtn, btn);

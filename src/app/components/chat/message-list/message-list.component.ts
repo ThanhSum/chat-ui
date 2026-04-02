@@ -12,29 +12,26 @@ import { MessageBubbleComponent } from '../message-bubble/message-bubble.compone
   imports: [CommonModule, MessageBubbleComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div
-      #scrollContainer
-      class="flex-1 overflow-y-auto py-4"
-    >
+    <div #scrollContainer class="flex-1 overflow-y-auto">
       <div class="mx-auto w-full max-w-2xl px-4">
-      @if (!chat.activeConversation() || chat.activeConversation()!.messages.length === 0) {
-        <div class="flex min-h-64 flex-col items-center justify-center px-4 text-center select-none">
-          <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gray-200 text-3xl dark:bg-gray-700">
-            &#128172;
+
+        @if (!chat.activeConversation() || chat.activeConversation()!.messages.length === 0) {
+          <div class="flex min-h-[60vh] flex-col items-center justify-center select-none">
+            <h1 class="text-2xl font-semibold text-gray-800 dark:text-gray-200">How can I help you today?</h1>
           </div>
-          <h2 class="mb-2 text-xl font-semibold text-gray-800 dark:text-gray-300">Chat UI</h2>
-          <p class="text-sm text-gray-500 dark:text-gray-500">Select a model and start chatting</p>
-        </div>
-      } @else {
-        @for (msg of messages(); track msg.id; let last = $last) {
-          <app-message-bubble
-            [message]="msg"
-            [isLast]="last"
-            [isStreaming]="chat.isStreaming()"
-            [conversationId]="chat.activeConversation()!.id"
-          />
+        } @else {
+          <div class="py-6 space-y-1">
+            @for (msg of messages(); track msg.id; let last = $last) {
+              <app-message-bubble
+                [message]="msg"
+                [isLast]="last"
+                [isStreaming]="chat.isStreaming()"
+                [conversationId]="chat.activeConversation()!.id"
+              />
+            }
+          </div>
         }
-      }
+
       </div>
     </div>
   `,

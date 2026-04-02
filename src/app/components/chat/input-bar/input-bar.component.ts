@@ -21,89 +21,102 @@ const SLASH_COMMANDS: SlashCommand[] = [
   imports: [CommonModule, FormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="border-t border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-700 dark:bg-gray-900">
-      <div class="mx-auto w-full min-w-0 max-w-2xl">
+    <div class="px-4 pb-5 pt-2 bg-[#f5f5f5] dark:bg-[#1a1a1a]">
+      <div class="mx-auto w-full max-w-2xl">
 
         @if (chat.error()) {
-          <div class="mb-3 flex min-w-0 max-w-full items-start gap-2 overflow-hidden rounded border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-800 dark:border-red-700 dark:bg-red-900/50 dark:text-red-200">
-            <span class="mt-0.5 shrink-0 text-red-500">&#9888;</span>
-            <span class="max-h-48 min-w-0 flex-1 overflow-y-auto break-all whitespace-pre-wrap leading-relaxed">{{ chat.error() }}</span>
-            <button type="button" (click)="chat.error.set(null)" class="ml-1 shrink-0 text-red-500 hover:text-red-700 dark:text-red-400">&#10005;</button>
+          <div class="mb-2 flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-800 dark:bg-red-900/30 dark:text-red-300">
+            <span class="shrink-0">⚠</span>
+            <span class="flex-1 break-all">{{ chat.error() }}</span>
+            <button (click)="chat.error.set(null)" class="shrink-0 opacity-60 hover:opacity-100">✕</button>
           </div>
         }
 
         @if (chat.selectedProvider() === 'ollama' && !chat.ollamaOnline()) {
-          <div class="mb-3 rounded border border-yellow-600 bg-yellow-50 px-4 py-2 text-sm text-yellow-900 dark:bg-yellow-900/50 dark:text-yellow-200">
-            &#9888; Ollama not detected — local models unavailable
+          <div class="mb-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-900/30 dark:text-amber-300">
+            ⚠ Ollama not detected — local models unavailable
           </div>
         }
 
-        <!-- System prompt pill -->
-        <div class="mb-2 flex items-center gap-2">
-          <button (click)="toggleSystemPrompt()"
-                  class="flex items-center gap-1.5 rounded border border-[#d1d9e0] bg-[#f6f8fa] px-2 py-1 text-[11px] text-gray-500
-                         hover:border-gray-400 hover:text-gray-800
-                         dark:border-[#30363d] dark:bg-[#161b22] dark:text-[#8b949e] dark:hover:border-[#8b949e] dark:hover:text-[#e6edf3]">
-            <svg class="h-3 w-3" viewBox="0 0 16 16" fill="currentColor">
-              <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Zm4.879-2.773 4.264 2.559a.25.25 0 0 1 0 .428l-4.264 2.559A.25.25 0 0 1 6 10.559V5.442a.25.25 0 0 1 .379-.215Z"/>
-            </svg>
-            System prompt
-            <span class="rounded bg-gray-200 px-1 py-0.5 text-[10px] text-gray-600 dark:bg-[#21262d] dark:text-[#8b949e]">
-              {{ systemPromptLabel() }}
-            </span>
-          </button>
-          <span class="flex-1"></span>
-          <span class="text-[11px] text-gray-400 dark:text-[#8b949e]">⌘K to search</span>
-        </div>
-
+        <!-- System prompt editor (inline, above input) -->
         @if (systemPromptOpen()) {
-          <div class="mb-2 rounded border border-[#d1d9e0] bg-[#f6f8fa] p-2 dark:border-[#30363d] dark:bg-[#161b22]">
+          <div class="mb-2 rounded-2xl border border-gray-200 bg-white p-3 shadow-sm dark:border-white/10 dark:bg-[#222]">
+            <p class="mb-1.5 text-xs font-medium text-gray-500 dark:text-gray-400">System prompt</p>
             <textarea [(ngModel)]="systemPromptText" rows="3" placeholder="You are a helpful assistant..."
-                      class="w-full resize-none bg-transparent text-sm text-gray-900 outline-none placeholder:text-gray-400 dark:text-[#e6edf3]"></textarea>
-            <div class="mt-1.5 flex justify-end gap-2">
-              <button (click)="cancelSystemPrompt()" class="rounded px-2 py-1 text-xs text-gray-500 hover:text-gray-800 dark:text-gray-400">Cancel</button>
-              <button (click)="saveSystemPrompt()" class="rounded bg-[#238636] px-2 py-1 text-xs text-white hover:bg-[#2ea043]">Save</button>
+                      class="w-full resize-none bg-transparent text-sm text-gray-900 outline-none placeholder:text-gray-400 dark:text-gray-100"></textarea>
+            <div class="mt-2 flex justify-end gap-2">
+              <button (click)="cancelSystemPrompt()" class="rounded-lg px-3 py-1 text-xs text-gray-500 hover:text-gray-800 dark:text-gray-400">Cancel</button>
+              <button (click)="saveSystemPrompt()" class="rounded-lg bg-gray-900 px-3 py-1 text-xs text-white hover:bg-gray-700 dark:bg-white dark:text-black dark:hover:bg-gray-200">Save</button>
             </div>
           </div>
         }
 
+        <!-- Slash command popup -->
         <div class="relative">
           @if (slashMenuVisible() && filteredCommands().length > 0) {
-            <div class="absolute bottom-full left-0 right-0 mb-1 overflow-hidden rounded border border-[#d1d9e0] bg-[#f6f8fa] shadow-lg dark:border-[#30363d] dark:bg-[#161b22]">
+            <div class="absolute bottom-full left-0 right-0 mb-2 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lg dark:border-white/10 dark:bg-[#222]">
               @for (c of filteredCommands(); track c.cmd; let i = $index) {
                 <div (click)="applySlashCommand(c)"
-                     class="cursor-pointer px-3 py-2 hover:bg-[#eaeef2] dark:hover:bg-[#21262d]"
-                     [class.bg-[#eaeef2]]="i === 0" [class.dark:bg-[#21262d]]="i === 0">
-                  <span class="text-sm font-semibold text-[#388bfd]">{{ c.cmd }}</span>
-                  <span class="ml-2 text-xs text-gray-500 dark:text-[#8b949e]">{{ c.description }}</span>
+                     class="cursor-pointer px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-white/5"
+                     [class.bg-gray-50]="i === 0" [class.dark:bg-white/5]="i === 0">
+                  <span class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ c.cmd }}</span>
+                  <span class="ml-2 text-xs text-gray-400">{{ c.description }}</span>
                 </div>
               }
             </div>
           }
 
-          <div class="flex flex-col rounded border border-[#d1d9e0] bg-white transition-colors
-                      focus-within:border-[#388bfd] dark:border-[#30363d] dark:bg-[#0d1117] dark:focus-within:border-[#388bfd]">
+          <!-- Main input box -->
+          <div class="rounded-2xl border border-gray-200 bg-white shadow-sm transition-shadow
+                      focus-within:shadow-md focus-within:border-gray-300
+                      dark:border-white/10 dark:bg-[#222] dark:focus-within:border-white/20">
             <textarea #textarea [(ngModel)]="inputText" (input)="autoResize()" (keydown.enter)="onEnter($any($event))"
-                      [disabled]="chat.isStreaming()" placeholder="Message... (type / for commands)" rows="1"
-                      class="max-h-48 min-h-10 flex-1 resize-none bg-transparent px-4 py-3 text-sm leading-normal
-                             text-gray-900 outline-none placeholder:text-gray-400 disabled:opacity-50 dark:text-gray-100 dark:placeholder:text-gray-500"></textarea>
+                      [disabled]="chat.isStreaming()"
+                      placeholder="Ask me anything..."
+                      rows="1"
+                      class="w-full resize-none bg-transparent px-4 pt-3.5 pb-2 text-sm leading-relaxed
+                             text-gray-900 outline-none placeholder:text-gray-400
+                             disabled:opacity-50 dark:text-gray-100 dark:placeholder:text-gray-500"
+                      style="max-height: 200px; overflow-y: auto;"></textarea>
 
-            <div class="flex items-center gap-2 border-t border-gray-100 px-3 py-1.5 dark:border-[#21262d]">
-              <span class="text-xs text-gray-400 dark:text-[#8b949e]">↵ Send · ⇧↵ Newline</span>
+            <!-- Bottom toolbar -->
+            <div class="flex items-center gap-2 px-3 pb-3">
+              <!-- Left actions -->
+              <button (click)="toggleSystemPrompt()" title="System prompt"
+                      class="flex h-7 w-7 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-white/10 dark:hover:text-gray-200">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+              </button>
+              <button title="Voice input"
+                      class="flex h-7 w-7 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-white/10 dark:hover:text-gray-200">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
+                </svg>
+              </button>
+
               <span class="flex-1"></span>
-              <span class="text-xs" [class.text-gray-400]="!tokenWarning()" [class.text-amber-500]="tokenWarning()">
-                ~{{ tokenCount() }} tokens
-              </span>
+
+              <!-- Token hint -->
+              @if (inputText.length > 0) {
+                <span class="text-[11px]" [class.text-gray-400]="!tokenWarning()" [class.text-amber-500]="tokenWarning()">
+                  ~{{ tokenCount() }}
+                </span>
+              }
+
+              <!-- Send / Stop -->
               @if (chat.isStreaming()) {
-                <button (click)="stop()" title="Stop"
-                        class="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded bg-red-600 hover:bg-red-500">
-                  <span class="block h-2.5 w-2.5 rounded-sm bg-white"></span>
+                <button (click)="stop()"
+                        class="flex h-8 w-8 items-center justify-center rounded-full bg-gray-800 text-white hover:bg-gray-600 dark:bg-gray-200 dark:text-black dark:hover:bg-gray-400">
+                  <span class="block h-3 w-3 rounded-sm bg-current"></span>
                 </button>
               } @else {
-                <button (click)="send()" [disabled]="!inputText.trim() || !chat.activeConversation()" title="Send"
-                        class="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded bg-[#238636]
-                               hover:bg-[#2ea043] disabled:cursor-not-allowed disabled:opacity-30">
-                  <svg class="h-4 w-4 rotate-90 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <button (click)="send()" [disabled]="!inputText.trim() || !chat.activeConversation()"
+                        class="flex h-8 w-8 items-center justify-center rounded-full bg-gray-800 text-white
+                               hover:bg-gray-600 disabled:opacity-30 disabled:cursor-not-allowed
+                               dark:bg-gray-200 dark:text-black dark:hover:bg-gray-400">
+                  <svg class="h-4 w-4 rotate-90" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
                   </svg>
                 </button>
@@ -127,10 +140,6 @@ export class InputBarComponent {
   filteredCommands = computed(() => SLASH_COMMANDS.filter(c => c.cmd.startsWith(this.inputText.toLowerCase())));
   tokenCount = computed(() => Math.round(this.inputText.length / 4));
   tokenWarning = computed(() => this.tokenCount() > 2000);
-  systemPromptLabel = computed(() => {
-    const p = this.chat.activeConversation()?.systemPrompt;
-    return p !== undefined && p.length > 0 ? 'custom' : 'default';
-  });
 
   toggleSystemPrompt(): void {
     if (this.systemPromptOpen()) { this.systemPromptOpen.set(false); return; }
@@ -185,7 +194,7 @@ export class InputBarComponent {
     const el = this.textareaRef?.nativeElement;
     if (!el) return;
     el.style.height = 'auto';
-    el.style.height = Math.min(el.scrollHeight, 192) + 'px';
+    el.style.height = Math.min(el.scrollHeight, 200) + 'px';
   }
 
   private resetHeight(): void {
