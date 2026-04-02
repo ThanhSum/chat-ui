@@ -1,0 +1,74 @@
+<h2>What design direction appeals to you?</h2>
+<p class="subtitle">This will guide the style of all UI improvements we propose</p>
+
+<div class="cards">
+
+  <div class="card" data-choice="minimal" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#f9fafb;padding:16px;border-radius:8px;font-family:system-ui">
+      <div style="display:flex;height:120px;gap:8px">
+        <div style="width:30%;background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:8px">
+          <div style="height:6px;background:#e5e7eb;border-radius:3px;margin-bottom:6px;width:70%"></div>
+          <div style="height:5px;background:#f3f4f6;border-radius:3px;margin-bottom:4px"></div>
+          <div style="height:5px;background:#f3f4f6;border-radius:3px;margin-bottom:4px;width:80%"></div>
+          <div style="height:5px;background:#f3f4f6;border-radius:3px;width:60%"></div>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:6px;justify-content:center">
+          <div style="align-self:flex-end;background:#3b82f6;color:#fff;border-radius:16px 16px 4px 16px;padding:6px 10px;font-size:10px">Hello!</div>
+          <div style="align-self:flex-start;background:#fff;border:1px solid #e5e7eb;border-radius:4px 16px 16px 16px;padding:6px 10px;font-size:10px;color:#374151">Hi, how can I help?</div>
+          <div style="align-self:flex-end;background:#3b82f6;color:#fff;border-radius:16px 16px 4px 16px;padding:6px 10px;font-size:10px">Write some code</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Minimal / Content-first</h3>
+      <p>Clean white surfaces, thin borders, no decoration. Every pixel serves the content. Feels light and fast.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="polished" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:linear-gradient(135deg,#1e1b4b 0%,#312e81 100%);padding:16px;border-radius:8px;font-family:system-ui">
+      <div style="display:flex;height:120px;gap:8px">
+        <div style="width:30%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:6px;padding:8px;backdrop-filter:blur(4px)">
+          <div style="height:6px;background:rgba(255,255,255,0.3);border-radius:3px;margin-bottom:6px;width:70%"></div>
+          <div style="height:5px;background:rgba(255,255,255,0.1);border-radius:3px;margin-bottom:4px"></div>
+          <div style="height:5px;background:rgba(255,255,255,0.1);border-radius:3px;margin-bottom:4px;width:80%"></div>
+          <div style="height:5px;background:rgba(255,255,255,0.1);border-radius:3px;width:60%"></div>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:6px;justify-content:center">
+          <div style="align-self:flex-end;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-radius:16px 16px 4px 16px;padding:6px 10px;font-size:10px;box-shadow:0 2px 8px rgba(99,102,241,0.5)">Hello!</div>
+          <div style="align-self:flex-start;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:4px 16px 16px 16px;padding:6px 10px;font-size:10px;color:#e0e7ff">Hi, how can I help?</div>
+          <div style="align-self:flex-end;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-radius:16px 16px 4px 16px;padding:6px 10px;font-size:10px;box-shadow:0 2px 8px rgba(99,102,241,0.5)">Write some code</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Polished / Modern dark</h3>
+      <p>Deep indigo/slate backgrounds, glassmorphism sidebar, gradient accents. Premium, immersive feel.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="devtool" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#0d1117;padding:16px;border-radius:8px;font-family:monospace">
+      <div style="display:flex;height:120px;gap:8px">
+        <div style="width:30%;background:#161b22;border:1px solid #30363d;border-radius:4px;padding:8px">
+          <div style="height:6px;background:#58a6ff;border-radius:2px;margin-bottom:6px;width:70%;opacity:0.8"></div>
+          <div style="height:5px;background:#30363d;border-radius:2px;margin-bottom:4px"></div>
+          <div style="height:5px;background:#30363d;border-radius:2px;margin-bottom:4px;width:80%"></div>
+          <div style="height:5px;background:#30363d;border-radius:2px;width:60%"></div>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:6px;justify-content:center">
+          <div style="align-self:flex-end;background:#238636;color:#fff;border-radius:4px;padding:5px 10px;font-size:9px;border:1px solid #2ea043">Hello!</div>
+          <div style="align-self:flex-start;background:#161b22;border:1px solid #30363d;border-radius:4px;padding:5px 10px;font-size:9px;color:#e6edf3">Hi, how can I help?</div>
+          <div style="align-self:flex-end;background:#238636;color:#fff;border-radius:4px;padding:5px 10px;font-size:9px;border:1px solid #2ea043">Write some code</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Dev-tool / GitHub-style</h3>
+      <p>GitHub Dark aesthetic — sharp edges, monospace touches, muted greens and blues. Feels like home for developers.</p>
+    </div>
+  </div>
+
+</div>
+
+<p class="subtitle" style="margin-top:1rem">Click a card to select it, then reply in the terminal.</p>

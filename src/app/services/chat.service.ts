@@ -4,11 +4,18 @@ import { SettingsService } from './settings.service';
 import { ProviderName } from '../providers/provider.interface';
 import { getProvider } from '../providers/provider.index';
 
+export interface OllamaModelMeta {
+  parameterSize: string;
+  sizeGb: string;
+}
+
 export interface ChatMessage {
   id: string;
   role: 'user' | 'assistant';
   content: string;
   timestamp: number;
+  durationMs?: number;
+  editedAt?: number;
 }
 
 export interface Conversation {
@@ -17,6 +24,7 @@ export interface Conversation {
   messages: ChatMessage[];
   provider: ProviderName;
   model: string;
+  systemPrompt?: string;
   createdAt: number;
   updatedAt: number;
 }
@@ -37,6 +45,7 @@ export class ChatService {
   error = signal<string | null>(null);
   ollamaModels = signal<string[]>([]);
   ollamaOnline = signal<boolean>(false);
+  ollamaModelMeta = signal<Record<string, OllamaModelMeta>>({});
   openRouterModels = signal<string[]>([]);
 
   selectedProvider = signal<ProviderName>('openai');
@@ -81,18 +90,12 @@ export class ChatService {
     }
   }
 
-  /** Keep the active conversation in sync with sidebar provider/model (used for the next send). */
   applySelectionToActiveConversation(): void {
     const id = this.activeConversationId();
     if (id == null) return;
     const p = this.selectedProvider();
     const m = this.selectedModel();
-    this.updateConversation(id, c => ({
-      ...c,
-      provider: p,
-      model: m,
-      updatedAt: Date.now(),
-    }));
+    this.updateConversation(id, c => ({ ...c, provider: p, model: m, updatedAt: Date.now() }));
     this.persist();
   }
 
@@ -105,12 +108,35 @@ export class ChatService {
     this.persist();
   }
 
+  clearMessages(): void {
+    const id = this.activeConversationId();
+    if (id == null) return;
+    this.updateConversation(id, c => ({ ...c, messages: [], updatedAt: Date.now() }));
+    this.persist();
+  }
+
+  setConversationSystemPrompt(convId: string, prompt: string): void {
+    this.updateConversation(convId, c => ({ ...c, systemPrompt: prompt, updatedAt: Date.now() }));
+    this.persist();
+  }
+
+  editUserMessage(convId: string, msgId: string, newContent: string): void {
+    this.updateConversation(convId, c => {
+      const idx = c.messages.findIndex(m => m.id === msgId);
+      if (idx === -1) return c;
+      return { ...c, messages: c.messages.slice(0, idx), updatedAt: Date.now() };
+    });
+    this.persist();
+    this.sendMessage(newContent);
+  }
+
   sendMessage(userText: string): void {
     const conv = this.activeConversation();
     if (!conv || this.isStreaming()) return;
 
     const s = this.settingsSvc.settings();
     const apiKey = this.settingsSvc.getApiKey(conv.provider);
+    const effectiveSystemPrompt = (conv.systemPrompt !== undefined ? conv.systemPrompt : s.systemPrompt) || undefined;
 
     const userMsg: ChatMessage = {
       id: crypto.randomUUID(),
@@ -140,15 +166,13 @@ export class ChatService {
       role: m.role as 'user' | 'assistant',
       content: m.content,
     }));
-    const allMessages = [
-      ...historyMessages,
-      { role: 'user' as const, content: userText },
-    ];
+    const allMessages = [...historyMessages, { role: 'user' as const, content: userText }];
 
-    // For Ollama, pass base URL as apiKey
     const effectiveApiKey = conv.provider === 'ollama'
       ? this.settingsSvc.settings().ollamaBaseUrl
       : apiKey;
+
+    const streamStart = Date.now();
 
     const provider = getProvider(conv.provider);
     this.abortController = provider.sendMessage({
@@ -156,13 +180,22 @@ export class ChatService {
       model: conv.model,
       messages: allMessages,
       apiKey: effectiveApiKey,
-      systemPrompt: s.systemPrompt || undefined,
+      systemPrompt: effectiveSystemPrompt,
       temperature: s.temperature,
       maxTokens: s.maxTokens,
       onChunk: (text) => {
         this.appendToLastMessage(conv.id, text);
       },
       onDone: () => {
+        const durationMs = Date.now() - streamStart;
+        this.updateConversation(conv.id, c => {
+          const msgs = [...c.messages];
+          const last = msgs[msgs.length - 1];
+          if (last?.role === 'assistant') {
+            msgs[msgs.length - 1] = { ...last, durationMs };
+          }
+          return { ...c, messages: msgs };
+        });
         this.isStreaming.set(false);
         this.abortController = null;
         this.persist();
@@ -190,21 +223,12 @@ export class ChatService {
   regenerateLastMessage(): void {
     const conv = this.activeConversation();
     if (!conv || this.isStreaming()) return;
-
     const msgs = conv.messages;
     if (msgs.length === 0 || msgs[msgs.length - 1].role !== 'assistant') return;
-
     const lastUserMsg = [...msgs].reverse().find(m => m.role === 'user');
-
-    this.updateConversation(conv.id, c => ({
-      ...c,
-      messages: c.messages.slice(0, -1),
-    }));
+    this.updateConversation(conv.id, c => ({ ...c, messages: c.messages.slice(0, -1) }));
     this.persist();
-
-    if (lastUserMsg) {
-      this.sendMessage(lastUserMsg.content);
-    }
+    if (lastUserMsg) this.sendMessage(lastUserMsg.content);
   }
 
   deleteMessage(convId: string, msgId: string): void {
@@ -221,14 +245,24 @@ export class ChatService {
       const res = await fetch(`${base}/api/tags`, { signal: AbortSignal.timeout(3000) });
       if (res.ok) {
         const data = await res.json();
-        const models: string[] = (data.models ?? []).map((m: any) => m.name as string);
+        const rawModels: any[] = data.models ?? [];
+        const models: string[] = rawModels.map((m: any) => m.name as string);
+        const meta: Record<string, OllamaModelMeta> = {};
+        for (const m of rawModels) {
+          meta[m.name as string] = {
+            parameterSize: (m.details?.parameter_size as string) ?? '',
+            sizeGb: m.size ? `${(m.size / 1e9).toFixed(1)} GB` : '',
+          };
+        }
         this.ollamaModels.set(models);
+        this.ollamaModelMeta.set(meta);
         this.ollamaOnline.set(true);
         return;
       }
     } catch {}
     this.ollamaOnline.set(false);
     this.ollamaModels.set([]);
+    this.ollamaModelMeta.set({});
   }
 
   async fetchOpenRouterModels(): Promise<void> {

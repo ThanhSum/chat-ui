@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(/Users/sumtran/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.6/skills/brainstorming/scripts/start-server.sh:*)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(json.dumps\\(d.get\\('projects',{}\\).get\\('chat-ui',{}\\).get\\('architect',{}\\).get\\('test',{}\\), indent=2\\)\\)\")",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(mkdir -p ~/.config/superpowers/worktrees/chat-ui)",
+      "Bash(git -C /Users/sumtran/Workspace/chat-ui worktree add ~/.config/superpowers/worktrees/chat-ui/feature-ui-elements -b feature/ui-elements)",
+      "Read(//Users/sumtran/.config/superpowers/worktrees/chat-ui/feature-ui-elements/**)",
+      "Bash(npm install:*)",
+      "Bash(ng test:*)",
+      "Bash(git:*)",
+      "Bash(ls src/app/*.ts)"
+    ]
+  }
+}

@@ -1,0 +1,98 @@
+<h2>Design: Message &amp; Code Block Polish</h2>
+<p class="subtitle">GitHub dark style — current vs proposed</p>
+
+<div class="split">
+
+  <div class="mockup">
+    <div class="mockup-header">Current</div>
+    <div class="mockup-body" style="background:#0d1117;padding:12px;font-family:system-ui;font-size:12px;color:#e6edf3">
+
+      <!-- User bubble -->
+      <div style="display:flex;justify-content:flex-end;align-items:flex-start;gap:8px;margin-bottom:12px">
+        <div style="background:#1f6feb;color:#fff;border-radius:16px 16px 4px 16px;padding:8px 12px;max-width:75%;font-size:12px">Write a Python hello world</div>
+        <div style="width:24px;height:24px;border-radius:50%;background:#1f6feb;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0">U</div>
+      </div>
+
+      <!-- AI bubble -->
+      <div style="display:flex;justify-content:flex-start;align-items:flex-start;gap:8px">
+        <div style="width:24px;height:24px;border-radius:50%;background:#238636;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0">AI</div>
+        <div style="background:#161b22;border-radius:4px 16px 16px 16px;padding:8px 12px;max-width:75%;font-size:12px">
+          <p style="margin:0 0 6px">Sure! Here's a hello world:</p>
+          <pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:8px;margin:0;font-size:11px;color:#e6edf3;overflow-x:auto"><code><span style="color:#ff7b72">print</span>(<span style="color:#a5d6ff">"Hello, World!"</span>)</code></pre>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="mockup">
+    <div class="mockup-header">Proposed</div>
+    <div class="mockup-body" style="background:#0d1117;padding:12px;font-family:system-ui;font-size:12px;color:#e6edf3">
+
+      <!-- User bubble -->
+      <div style="display:flex;justify-content:flex-end;align-items:flex-start;gap:8px;margin-bottom:12px">
+        <div style="max-width:75%">
+          <div style="background:#1f6feb;color:#fff;border-radius:6px 6px 2px 6px;padding:8px 12px;font-size:12px">Write a Python hello world</div>
+          <!-- Hover actions + timestamp -->
+          <div style="display:flex;justify-content:flex-end;align-items:center;gap:6px;margin-top:3px">
+            <span style="font-size:9px;color:#8b949e">2:34 PM</span>
+            <button style="font-size:9px;color:#8b949e;background:#161b22;border:1px solid #30363d;border-radius:3px;padding:1px 5px;cursor:pointer">✏ Edit</button>
+            <button style="font-size:9px;color:#8b949e;background:#161b22;border:1px solid #30363d;border-radius:3px;padding:1px 5px;cursor:pointer">⎘ Copy</button>
+          </div>
+        </div>
+        <div style="width:24px;height:24px;border-radius:4px;background:#1f6feb;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0">U</div>
+      </div>
+
+      <!-- AI bubble -->
+      <div style="display:flex;justify-content:flex-start;align-items:flex-start;gap:8px">
+        <div style="width:24px;height:24px;border-radius:4px;background:#161b22;border:1px solid #30363d;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0">🤖</div>
+        <div style="max-width:75%">
+          <div style="background:#161b22;border:1px solid #30363d;border-radius:2px 6px 6px 6px;padding:8px 12px;font-size:12px">
+            <p style="margin:0 0 8px;color:#e6edf3">Sure! Here's a hello world:</p>
+
+            <!-- Improved code block -->
+            <div style="border:1px solid #30363d;border-radius:6px;overflow:hidden">
+              <!-- Code header -->
+              <div style="display:flex;align-items:center;justify-content:space-between;background:#161b22;border-bottom:1px solid #30363d;padding:5px 10px">
+                <div style="display:flex;align-items:center;gap:6px">
+                  <span style="width:8px;height:8px;border-radius:50%;background:#f78166;display:inline-block"></span>
+                  <span style="font-size:10px;color:#8b949e;font-family:monospace">python</span>
+                </div>
+                <button style="font-size:9px;color:#8b949e;background:transparent;border:none;cursor:pointer">⎘ Copy</button>
+              </div>
+              <!-- Code with line numbers -->
+              <div style="display:flex;background:#0d1117;padding:8px 0">
+                <div style="color:#8b949e;font-size:10px;padding:0 10px;text-align:right;user-select:none;border-right:1px solid #21262d;min-width:28px;font-family:monospace">1</div>
+                <pre style="margin:0;padding:0 10px;font-size:11px;font-family:monospace;color:#e6edf3"><code><span style="color:#ff7b72">print</span>(<span style="color:#a5d6ff">"Hello, World!"</span>)</code></pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hover actions + timestamp + streaming done -->
+          <div style="display:flex;align-items:center;gap:6px;margin-top:3px">
+            <span style="font-size:9px;color:#8b949e">2:34 PM · 0.8s</span>
+            <span style="flex:1"></span>
+            <button style="font-size:9px;color:#8b949e;background:#161b22;border:1px solid #30363d;border-radius:3px;padding:1px 5px;cursor:pointer">↺ Retry</button>
+            <button style="font-size:9px;color:#8b949e;background:#161b22;border:1px solid #30363d;border-radius:3px;padding:1px 5px;cursor:pointer">⎘ Copy</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<div class="section" style="margin-top:1.5rem">
+  <h3>What changed</h3>
+  <ul style="font-size:13px;color:#8b949e;line-height:1.8;padding-left:1.2rem">
+    <li><strong style="color:#e6edf3">Square avatars</strong> — rounded squares (border-radius 4px) instead of circles. More GitHub-native.</li>
+    <li><strong style="color:#e6edf3">Edit user messages</strong> — ✏ Edit button on hover replaces old user bubble inline. Clicking opens the bubble in an editable state and re-sends.</li>
+    <li><strong style="color:#e6edf3">Timestamps + generation time</strong> — subtle timestamp on each message; assistant messages also show generation duration (e.g. "0.8s").</li>
+    <li><strong style="color:#e6edf3">Code blocks with line numbers</strong> — gutter with line numbers, colored language dot in header, cleaner copy button.</li>
+    <li><strong style="color:#e6edf3">Streaming indicator</strong> — during streaming, a pulsing "Generating…" badge appears below the last assistant bubble instead of the blinking cursor (more legible).</li>
+    <li><strong style="color:#e6edf3">Bordered assistant bubble</strong> — adds a subtle <code style="background:#161b22;padding:1px 4px;border-radius:3px;font-size:11px">#30363d</code> border to assistant messages for better separation on dark backgrounds.</li>
+  </ul>
+</div>
+
+<p class="subtitle" style="margin-top:1rem">Does this look right? Reply in the terminal to finalize.</p>

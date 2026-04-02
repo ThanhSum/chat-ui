@@ -1,0 +1,81 @@
+<h2>Design: Power Input Bar</h2>
+<p class="subtitle">GitHub dark style — current vs proposed</p>
+
+<div class="split">
+
+  <div class="mockup">
+    <div class="mockup-header">Current</div>
+    <div class="mockup-body" style="background:#0d1117;padding:12px;font-family:system-ui;font-size:12px;color:#e6edf3">
+      <div style="border-top:1px solid #21262d;padding-top:10px">
+        <div style="display:flex;align-items:center;gap:8px;background:#161b22;border:1px solid #30363d;border-radius:12px;padding:8px 12px">
+          <textarea style="flex:1;background:transparent;border:none;outline:none;color:#e6edf3;font-size:12px;resize:none;font-family:inherit" rows="1" placeholder="Message..." readonly></textarea>
+          <div style="width:28px;height:28px;border-radius:50%;background:#238636;display:flex;align-items:center;justify-content:center;font-size:11px">➤</div>
+        </div>
+        <div style="text-align:center;color:#8b949e;font-size:10px;margin-top:6px">AI can make mistakes. Verify important info.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mockup">
+    <div class="mockup-header">Proposed</div>
+    <div class="mockup-body" style="background:#0d1117;padding:12px;font-family:system-ui;font-size:12px;color:#e6edf3">
+      <div style="border-top:1px solid #21262d;padding-top:10px">
+
+        <!-- System prompt pill (collapsed) -->
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+          <button style="display:flex;align-items:center;gap:4px;background:#161b22;border:1px solid #30363d;border-radius:4px;padding:3px 8px;font-size:10px;color:#8b949e;cursor:pointer">
+            <span style="font-size:9px">⚙</span> System prompt
+            <span style="background:#21262d;border-radius:3px;padding:1px 4px;font-size:9px;color:#58a6ff">default</span>
+          </button>
+          <span style="flex:1"></span>
+          <span style="font-size:10px;color:#8b949e">⌘K to search</span>
+        </div>
+
+        <!-- Main input box -->
+        <div style="background:#161b22;border:1px solid #30363d;border-radius:8px;overflow:hidden">
+          <div style="padding:10px 12px;min-height:48px;position:relative">
+            <div style="color:#8b949e;font-size:12px">/explain this function…</div>
+            <!-- Slash command tooltip -->
+            <div style="position:absolute;bottom:calc(100% + 4px);left:0;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:4px 0;width:220px;box-shadow:0 4px 12px rgba(0,0,0,0.5)">
+              <div style="padding:5px 10px;background:#1f6feb22;border-left:2px solid #58a6ff">
+                <div style="font-size:11px;font-weight:600;color:#58a6ff">/explain</div>
+                <div style="font-size:10px;color:#8b949e">Explain the selected code</div>
+              </div>
+              <div style="padding:5px 10px">
+                <div style="font-size:11px;color:#e6edf3">/fix</div>
+                <div style="font-size:10px;color:#8b949e">Fix bugs in the selection</div>
+              </div>
+              <div style="padding:5px 10px">
+                <div style="font-size:11px;color:#e6edf3">/clear</div>
+                <div style="font-size:10px;color:#8b949e">Clear conversation history</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom toolbar -->
+          <div style="display:flex;align-items:center;gap:6px;padding:6px 10px;border-top:1px solid #21262d;background:#0d1117">
+            <span style="font-size:10px;color:#8b949e">↵ Send · ⇧↵ Newline</span>
+            <span style="flex:1"></span>
+            <span style="font-size:10px;color:#8b949e">~320 tokens</span>
+            <div style="width:24px;height:24px;border-radius:5px;background:#238636;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff">➤</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="section" style="margin-top:1.5rem">
+  <h3>What changed</h3>
+  <ul style="font-size:13px;color:#8b949e;line-height:1.8;padding-left:1.2rem">
+    <li><strong style="color:#e6edf3">Slash commands</strong> — type <code style="background:#161b22;padding:1px 4px;border-radius:3px;font-size:11px">/</code> to trigger a filtered popup (e.g. <code style="background:#161b22;padding:1px 4px;border-radius:3px;font-size:11px">/explain</code>, <code style="background:#161b22;padding:1px 4px;border-radius:3px;font-size:11px">/fix</code>, <code style="background:#161b22;padding:1px 4px;border-radius:3px;font-size:11px">/clear</code>). Extensible list.</li>
+    <li><strong style="color:#e6edf3">System prompt pill</strong> — collapsed toggle above the box. Click to expand an inline editor. Shows active preset name.</li>
+    <li><strong style="color:#e6edf3">Token counter</strong> — live estimate in the toolbar. Turns amber near the model's context limit.</li>
+    <li><strong style="color:#e6edf3">Keyboard hint strip</strong> — ↵ Send · ⇧↵ Newline, always visible. Replaces the "AI can make mistakes" disclaimer (move to settings).</li>
+    <li><strong style="color:#e6edf3">⌘K hint</strong> — passive reminder of the command palette shortcut (for future use or opt-in).</li>
+  </ul>
+</div>
+
+<p class="subtitle" style="margin-top:1rem">Does this look right? Reply in the terminal to continue to the final section.</p>

@@ -50,46 +50,91 @@
 
 @layer components {
   .code-block-wrapper {
-    position: relative;
-    border-radius: 0.5rem;
+    border-radius: 6px;
     overflow: hidden;
     margin: 0.75rem 0;
-    background-color: #1f2937;
+    border: 1px solid #30363d;
+    background-color: #0d1117;
 
     .code-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0.5rem 1rem;
-      background-color: #374151;
+      padding: 6px 12px;
+      background-color: #161b22;
+      border-bottom: 1px solid #30363d;
       font-size: 0.75rem;
-      color: #9ca3af;
+      color: #8b949e;
+
+      .code-header-left {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .lang-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #8b949e;
+        flex-shrink: 0;
+        &[data-lang="python"]                          { background: #f78166; }
+        &[data-lang="javascript"], &[data-lang="js"]   { background: #d2a8ff; }
+        &[data-lang="typescript"], &[data-lang="ts"]   { background: #d2a8ff; }
+        &[data-lang="bash"], &[data-lang="shell"], &[data-lang="sh"] { background: #3fb950; }
+        &[data-lang="html"]  { background: #e06c75; }
+        &[data-lang="css"]   { background: #61afef; }
+        &[data-lang="json"]  { background: #d29922; }
+        &[data-lang="rust"]  { background: #f0883e; }
+        &[data-lang="go"]    { background: #58a6ff; }
+      }
+
+      .lang-label {
+        font-family: var(--font-family-mono);
+        font-size: 11px;
+        color: #8b949e;
+      }
+
+      .copy-code-btn {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        color: #8b949e;
+        font-size: 11px;
+        padding: 0;
+        &:hover { color: #e6edf3; }
+      }
     }
 
-    pre {
+    .code-body {
+      display: flex;
       overflow-x: auto;
-      padding: 1rem;
-      margin: 0;
-      font-size: 0.875rem;
-      font-family: var(--font-family-mono);
 
-      code {
+      .line-gutter {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        padding: 1rem 10px;
+        min-width: 2.5rem;
+        border-right: 1px solid #21262d;
+        user-select: none;
+        font-family: var(--font-family-mono);
+        font-size: 0.8rem;
+        line-height: 1.5;
+        color: #8b949e;
+        span { display: block; }
+      }
+
+      pre {
+        flex: 1;
+        overflow-x: auto;
+        padding: 1rem;
+        margin: 0;
+        font-size: 0.875rem;
+        font-family: var(--font-family-mono);
         background: transparent;
+        code { background: transparent; white-space: pre; }
       }
     }
   }
-
-  .streaming-cursor {
-    display: inline-block;
-    width: 2px;
-    height: 1rem;
-    background-color: currentColor;
-    margin-left: 2px;
-    vertical-align: middle;
-    animation: blink 1s step-end infinite;
-  }
-}
-
-@keyframes blink {
-  50% { opacity: 0; }
 }

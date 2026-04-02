@@ -1,0 +1,69 @@
+<h2>Design: Model &amp; Provider Selector</h2>
+<p class="subtitle">GitHub dark style — current vs proposed</p>
+
+<div class="split">
+
+  <div class="mockup">
+    <div class="mockup-header">Current</div>
+    <div class="mockup-body" style="background:#0d1117;padding:12px;font-family:system-ui;font-size:12px;color:#e6edf3">
+      <div style="border-top:1px solid #30363d;padding-top:10px">
+        <div style="color:#8b949e;font-size:10px;margin-bottom:4px">Provider</div>
+        <select style="width:100%;background:#161b22;border:1px solid #30363d;color:#e6edf3;padding:6px 8px;border-radius:6px;font-size:12px">
+          <option>Ollama</option>
+        </select>
+      </div>
+      <div style="margin-top:8px">
+        <div style="color:#8b949e;font-size:10px;margin-bottom:4px">Model</div>
+        <select style="width:100%;background:#161b22;border:1px solid #30363d;color:#e6edf3;padding:6px 8px;border-radius:6px;font-size:12px">
+          <option>llama3.2:3b</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="mockup">
+    <div class="mockup-header">Proposed</div>
+    <div class="mockup-body" style="background:#0d1117;padding:12px;font-family:system-ui;font-size:12px;color:#e6edf3">
+      <div style="border-top:1px solid #30363d;padding-top:10px">
+
+        <!-- Provider row with status dot -->
+        <div style="color:#8b949e;font-size:10px;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.05em">Provider</div>
+        <div style="position:relative">
+          <select style="width:100%;background:#161b22;border:1px solid #30363d;color:#e6edf3;padding:6px 8px 6px 28px;border-radius:6px;font-size:12px;appearance:none">
+            <option>Ollama</option>
+          </select>
+          <!-- Status dot -->
+          <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);width:7px;height:7px;border-radius:50%;background:#3fb950;box-shadow:0 0 4px #3fb950"></span>
+          <span style="position:absolute;right:8px;top:50%;transform:translateY(-50%);color:#8b949e;font-size:10px">▾</span>
+        </div>
+        <div style="color:#3fb950;font-size:9px;margin-top:3px;padding-left:2px">● Connected · 4 models available</div>
+
+        <!-- Model selector as card -->
+        <div style="color:#8b949e;font-size:10px;margin-top:10px;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.05em">Model</div>
+        <div style="background:#161b22;border:1px solid #30363d;border-radius:6px;padding:8px 10px;cursor:pointer">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div>
+              <div style="font-size:12px;font-weight:600;color:#e6edf3">llama3.2</div>
+              <div style="font-size:10px;color:#8b949e;margin-top:1px">3B params · 128k ctx · 2.0 GB</div>
+            </div>
+            <span style="color:#8b949e;font-size:11px">▾</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="section" style="margin-top:1.5rem">
+  <h3>What changed</h3>
+  <ul style="font-size:13px;color:#8b949e;line-height:1.8;padding-left:1.2rem">
+    <li><strong style="color:#e6edf3">Live status dot</strong> — green pulse when Ollama is reachable, red when offline. Text hint shows model count.</li>
+    <li><strong style="color:#e6edf3">Model card</strong> — replaces bare <code style="background:#161b22;padding:1px 4px;border-radius:3px;font-size:11px">&lt;select&gt;</code> with a richer card showing param count, context length, and disk size (sourced from Ollama's <code style="background:#161b22;padding:1px 4px;border-radius:3px;font-size:11px">/api/tags</code> response).</li>
+    <li><strong style="color:#e6edf3">Uppercase labels</strong> — tighter, more GitHub-native label style.</li>
+    <li>Light mode mirrors this with <code style="background:#f6f8fa;color:#1f2328;padding:1px 4px;border-radius:3px;font-size:11px">#f6f8fa</code> surfaces and <code style="background:#f6f8fa;color:#1f2328;padding:1px 4px;border-radius:3px;font-size:11px">#d1d9e0</code> borders.</li>
+  </ul>
+</div>
+
+<p class="subtitle" style="margin-top:1rem">Does this look right? Reply in the terminal to continue to the next section.</p>

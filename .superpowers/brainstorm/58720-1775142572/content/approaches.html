@@ -1,0 +1,44 @@
+<h2>How should we approach this?</h2>
+<p class="subtitle">Three ways to deliver model UX + input bar + message polish in GitHub style</p>
+
+<div class="options">
+
+  <div class="option" data-choice="targeted" onclick="toggleSelect(this)">
+    <div class="letter">1</div>
+    <div class="content">
+      <h3>Targeted component upgrades <span style="font-size:11px;color:#58a6ff;margin-left:6px">★ Recommended</span></h3>
+      <p>Improve each of the 3 areas independently, keeping the existing layout shell intact. Ollama status dot, richer model card, slash commands in the input bar, better code blocks — surgical changes only.</p>
+      <div class="pros-cons" style="margin-top:8px">
+        <div class="pros"><h4>Pros</h4><ul><li>Lowest risk</li><li>Easy to review piece by piece</li><li>No layout regressions</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Less visually unified</li><li>Each component styled slightly independently</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="design-system" onclick="toggleSelect(this)">
+    <div class="letter">2</div>
+    <div class="content">
+      <h3>GitHub design tokens + features</h3>
+      <p>Define CSS variables mirroring GitHub's dark palette (--color-border-default, --color-fg-muted, etc.) and apply them across all components in one pass, while adding all 3 feature sets.</p>
+      <div class="pros-cons" style="margin-top:8px">
+        <div class="pros"><h4>Pros</h4><ul><li>Most visually cohesive</li><li>Easier to maintain long-term</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>More touchpoints = higher risk</li><li>Requires careful Tailwind integration</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="full-expansion" onclick="toggleSelect(this)">
+    <div class="letter">3</div>
+    <div class="content">
+      <h3>Full feature expansion</h3>
+      <p>Everything in option 1, plus structural additions: collapsible sidebar, ⌘K command palette (search conversations + switch models), and a sticky model/context bar in the chat header.</p>
+      <div class="pros-cons" style="margin-top:8px">
+        <div class="pros"><h4>Pros</h4><ul><li>Most impactful UX</li><li>Keyboard-driven power-user flow</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Touches app shell layout</li><li>More implementation work</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p class="subtitle" style="margin-top:1rem">Click to select, then confirm in the terminal.</p>
