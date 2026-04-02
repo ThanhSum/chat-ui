@@ -11,7 +11,12 @@
       "Bash(npm install:*)",
       "Bash(ng test:*)",
       "Bash(git:*)",
-      "Bash(ls src/app/*.ts)"
+      "Bash(ls src/app/*.ts)",
+      "Bash(gh repo:*)",
+      "Bash(gh api:*)",
+      "Bash(python3 -c \"import sys,json; [print\\(f['path']\\) for f in json.load\\(sys.stdin\\).get\\('tree',[]\\) if f['path'].endswith\\(\\('.html','.ts','.scss','.css'\\)\\) and 'node_modules' not in f['path']]\")",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)"
     ]
   }
 }

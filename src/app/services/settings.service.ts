@@ -59,11 +59,12 @@ export class SettingsService {
   }
 
   setApiKey(provider: ProviderName, key: string): void {
-    this.apiKeys.update(keys => ({ ...keys, [provider]: key }));
+    const trimmed = key.trim();
+    this.apiKeys.update(keys => ({ ...keys, [provider]: trimmed }));
   }
 
   getApiKey(provider: ProviderName): string {
-    return this.apiKeys()[provider] ?? '';
+    return (this.apiKeys()[provider] ?? '').trim();
   }
 
   private loadApiKeys(): Partial<Record<ProviderName, string>> {

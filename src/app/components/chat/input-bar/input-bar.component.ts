@@ -115,9 +115,12 @@ const SLASH_COMMANDS: SlashCommand[] = [
                 <button (click)="send()" [disabled]="!inputText.trim() || !chat.activeConversation()"
                         class="flex h-8 w-8 items-center justify-center rounded-full bg-gray-800 text-white
                                hover:bg-gray-600 disabled:opacity-30 disabled:cursor-not-allowed
-                               dark:bg-gray-200 dark:text-black dark:hover:bg-gray-400">
-                  <svg class="h-4 w-4 rotate-90" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                               dark:bg-gray-200 dark:text-black dark:hover:bg-gray-400"
+                        title="Send">
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.25"
+                       viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M12 19V5M5 12l7-7 7 7"/>
                   </svg>
                 </button>
               }

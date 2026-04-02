@@ -1,7 +1,7 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { StorageService } from './storage.service';
 import { SettingsService } from './settings.service';
-import { ProviderName } from '../providers/provider.interface';
+import { ProviderName, PROVIDER_LABELS } from '../providers/provider.interface';
 import { getProvider } from '../providers/provider.index';
 
 export interface OllamaModelMeta {
@@ -170,7 +170,30 @@ export class ChatService {
 
     const effectiveApiKey = conv.provider === 'ollama'
       ? this.settingsSvc.settings().ollamaBaseUrl
-      : apiKey;
+      : apiKey.trim();
+
+    if (!effectiveApiKey) {
+      this.isStreaming.set(false);
+      const hasOpenRouterKey = !!this.settingsSvc.getApiKey('openrouter').trim();
+      let msg: string;
+      if (conv.provider === 'ollama') {
+        msg = 'Set the Ollama base URL in Settings (Ollama section).';
+      } else if (hasOpenRouterKey && conv.provider !== 'openrouter') {
+        msg =
+          `This chat uses ${PROVIDER_LABELS[conv.provider]} directly, but you only have a key saved for OpenRouter. ` +
+          `Either switch the provider (bottom bar) to OpenRouter and pick a model, ` +
+          `or add a separate ${PROVIDER_LABELS[conv.provider]} API key in Settings for the "${PROVIDER_LABELS[conv.provider]}" row and click Save.`;
+      } else {
+        msg = `Missing API key for ${PROVIDER_LABELS[conv.provider]}. Open Settings, paste your key in that provider’s field, and click Save.`;
+      }
+      this.error.set(msg);
+      this.updateConversation(conv.id, c => ({
+        ...c,
+        messages: c.messages.filter(m => m.id !== assistantMsg.id),
+      }));
+      this.persist();
+      return;
+    }
 
     const streamStart = Date.now();
 
