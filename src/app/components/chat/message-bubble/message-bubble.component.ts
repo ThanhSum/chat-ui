@@ -88,7 +88,20 @@ import { SettingsService } from '../../../services/settings.service';
             </div>
           } @else {
             <div class="rounded-2xl bg-gray-100 px-4 py-3 text-sm text-gray-900 dark:bg-white/10 dark:text-gray-100">
-              {{ message.content }}
+              @if (message.attachments?.length) {
+                <div class="mb-2 flex flex-wrap gap-2">
+                  @for (a of message.attachments; track $index) {
+                    <img
+                      [src]="'data:' + a.mimeType + ';base64,' + a.base64"
+                      class="max-h-48 max-w-full rounded-lg object-contain"
+                      alt=""
+                    />
+                  }
+                </div>
+              }
+              @if (message.content) {
+                <div class="whitespace-pre-wrap break-words">{{ message.content }}</div>
+              }
             </div>
             <div class="mt-1 flex justify-end items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
               <button (click)="startEdit()"

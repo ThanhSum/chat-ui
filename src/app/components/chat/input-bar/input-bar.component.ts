@@ -1,10 +1,14 @@
 import {
   Component, inject, ElementRef, ViewChild,
-  ChangeDetectionStrategy, signal, computed
+  ChangeDetectionStrategy, signal, computed, effect
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChatService } from '../../../services/chat.service';
+import { ImageAttachment } from '../../../providers/provider.interface';
+
+const MAX_PENDING_IMAGES = 4;
+const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
 
 interface SlashCommand { cmd: string; description: string; prefix: string; }
 
@@ -71,6 +75,7 @@ const SLASH_COMMANDS: SlashCommand[] = [
                       focus-within:shadow-md focus-within:border-gray-300
                       dark:border-white/10 dark:bg-[#222] dark:focus-within:border-white/20">
             <textarea #textarea [(ngModel)]="inputText" (input)="autoResize()" (keydown.enter)="onEnter($any($event))"
+                      (paste)="onPaste($event)"
                       [disabled]="chat.isStreaming()"
                       placeholder="Ask me anything..."
                       rows="1"
@@ -81,14 +86,33 @@ const SLASH_COMMANDS: SlashCommand[] = [
 
             <!-- Bottom toolbar -->
             <div class="flex items-center gap-2 px-3 pb-3">
-              <!-- Left actions -->
-              <button (click)="toggleSystemPrompt()" title="System prompt"
+              <!-- Hidden file input: must NOT use display:none — browsers often block programmatic .click() -->
+              <input
+                #fileInput
+                type="file"
+                accept="image/*"
+                multiple
+                tabindex="-1"
+                class="sr-only"
+                (change)="onFilePick($event)"
+              />
+              <!-- + = chỉ chọn ảnh (OpenRouter). System prompt = nút bánh răng bên cạnh -->
+              <button type="button" (click)="onPlusClick()"
+                      title="Thêm ảnh (cần OpenRouter)"
                       class="flex h-7 w-7 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-white/10 dark:hover:text-gray-200">
                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                 </svg>
               </button>
-              <button title="Voice input"
+              <button type="button" (click)="toggleSystemPrompt()" title="System prompt"
+                      class="flex h-7 w-7 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-white/10 dark:hover:text-gray-200">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+              </button>
+              <button type="button" title="Voice input"
                       class="flex h-7 w-7 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-white/10 dark:hover:text-gray-200">
                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -96,10 +120,15 @@ const SLASH_COMMANDS: SlashCommand[] = [
                 </svg>
               </button>
 
+              @if (chat.selectedProvider() === 'openrouter' && pendingImages().length > 0) {
+                <span class="text-[11px] text-gray-500 dark:text-gray-400">{{ pendingImages().length }} img</span>
+                <button type="button" (click)="clearPendingImages()" class="text-[11px] text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">Clear</button>
+              }
+
               <span class="flex-1"></span>
 
               <!-- Token hint -->
-              @if (inputText.length > 0) {
+              @if (inputText.length > 0 || pendingImages().length > 0) {
                 <span class="text-[11px]" [class.text-gray-400]="!tokenWarning()" [class.text-amber-500]="tokenWarning()">
                   ~{{ tokenCount() }}
                 </span>
@@ -112,7 +141,7 @@ const SLASH_COMMANDS: SlashCommand[] = [
                   <span class="block h-3 w-3 rounded-sm bg-current"></span>
                 </button>
               } @else {
-                <button (click)="send()" [disabled]="!inputText.trim() || !chat.activeConversation()"
+                <button (click)="send()" [disabled]="(!inputText.trim() && pendingImages().length === 0) || !chat.activeConversation()"
                         class="flex h-8 w-8 items-center justify-center rounded-full bg-gray-800 text-white
                                hover:bg-gray-600 disabled:opacity-30 disabled:cursor-not-allowed
                                dark:bg-gray-200 dark:text-black dark:hover:bg-gray-400"
@@ -134,15 +163,109 @@ const SLASH_COMMANDS: SlashCommand[] = [
 })
 export class InputBarComponent {
   @ViewChild('textarea') textareaRef!: ElementRef<HTMLTextAreaElement>;
+  @ViewChild('fileInput') fileInputRef!: ElementRef<HTMLInputElement>;
   chat = inject(ChatService);
   inputText = '';
   systemPromptText = '';
   systemPromptOpen = signal(false);
+  pendingImages = signal<ImageAttachment[]>([]);
+
+  constructor() {
+    effect(() => {
+      if (this.chat.selectedProvider() !== 'openrouter') {
+        this.pendingImages.set([]);
+      }
+    });
+  }
 
   slashMenuVisible = computed(() => this.inputText.startsWith('/'));
   filteredCommands = computed(() => SLASH_COMMANDS.filter(c => c.cmd.startsWith(this.inputText.toLowerCase())));
-  tokenCount = computed(() => Math.round(this.inputText.length / 4));
-  tokenWarning = computed(() => this.tokenCount() > 2000);
+  // NOTE: `inputText` is a normal field (not a signal), so `computed()` here would not reliably
+  // re-evaluate on typing when using OnPush change detection. Use methods instead.
+  tokenCount(): number {
+    const textLen = this.inputText.length;
+    const imgExtra = this.pendingImages().reduce((s, a) => s + a.base64.length * 0.75, 0);
+    return Math.round((textLen + imgExtra) / 4);
+  }
+  tokenWarning(): boolean {
+    return this.tokenCount() > 2000;
+  }
+
+  clearPendingImages(): void {
+    this.pendingImages.set([]);
+  }
+
+  onPlusClick(): void {
+    if (this.chat.selectedProvider() === 'openrouter') {
+      setTimeout(() => this.fileInputRef?.nativeElement?.click(), 0);
+      return;
+    }
+    this.chat.error.set(
+      'Để đính kèm ảnh, chọn provider OpenRouter ở thanh dưới cùng bên trái (cạnh chọn model).'
+    );
+  }
+
+  onPaste(e: ClipboardEvent): void {
+    if (this.chat.selectedProvider() !== 'openrouter') return;
+    const items = e.clipboardData?.items;
+    if (!items?.length) return;
+    const files: File[] = [];
+    for (let i = 0; i < items.length; i++) {
+      const it = items[i];
+      if (it.type.startsWith('image/')) {
+        const f = it.getAsFile();
+        if (f) files.push(f);
+      }
+    }
+    if (files.length === 0) return;
+    e.preventDefault();
+    void this.addImagesFromFiles(files);
+  }
+
+  onFilePick(e: Event): void {
+    const input = e.target as HTMLInputElement;
+    const files = input.files;
+    if (files?.length) void this.addImagesFromFiles(files);
+    input.value = '';
+  }
+
+  private async addImagesFromFiles(files: FileList | File[]): Promise<void> {
+    if (this.chat.selectedProvider() !== 'openrouter') return;
+    const list = Array.from(files);
+    let next = [...this.pendingImages()];
+    for (const file of list) {
+      if (next.length >= MAX_PENDING_IMAGES) break;
+      const att = await this.readImageFile(file);
+      if (att) next.push(att);
+    }
+    this.pendingImages.set(next);
+  }
+
+  private readImageFile(file: File): Promise<ImageAttachment | null> {
+    if (!file.type.startsWith('image/')) return Promise.resolve(null);
+    if (file.size > MAX_IMAGE_BYTES) {
+      this.chat.error.set(`Image too large (max ${MAX_IMAGE_BYTES / 1024 / 1024} MB per file).`);
+      return Promise.resolve(null);
+    }
+    return new Promise(resolve => {
+      const r = new FileReader();
+      r.onload = () => {
+        const dataUrl = r.result as string;
+        const comma = dataUrl.indexOf(',');
+        if (comma === -1) {
+          resolve(null);
+          return;
+        }
+        const header = dataUrl.slice(0, comma);
+        const mimeMatch = header.match(/^data:([^;]+)/);
+        const mimeType = mimeMatch ? mimeMatch[1] : 'image/png';
+        const base64 = dataUrl.slice(comma + 1);
+        resolve({ mimeType, base64 });
+      };
+      r.onerror = () => resolve(null);
+      r.readAsDataURL(file);
+    });
+  }
 
   toggleSystemPrompt(): void {
     if (this.systemPromptOpen()) { this.systemPromptOpen.set(false); return; }
@@ -161,10 +284,10 @@ export class InputBarComponent {
   applySlashCommand(c: SlashCommand): void {
     if (c.cmd === '/clear') {
       if (confirm('Clear all messages?')) this.chat.clearMessages();
-      this.inputText = ''; this.resetHeight(); return;
+      this.inputText = ''; this.pendingImages.set([]); this.resetHeight(); return;
     }
     if (c.cmd === '/system') {
-      this.inputText = ''; this.resetHeight();
+      this.inputText = ''; this.pendingImages.set([]); this.resetHeight();
       this.systemPromptText = this.chat.activeConversation()?.systemPrompt ?? '';
       this.systemPromptOpen.set(true); return;
     }
@@ -184,10 +307,12 @@ export class InputBarComponent {
 
   send(): void {
     const text = this.inputText.trim();
-    if (!text || this.chat.isStreaming()) return;
+    const imgs = this.pendingImages();
+    if ((!text && imgs.length === 0) || this.chat.isStreaming()) return;
     if (!this.chat.activeConversation()) this.chat.newConversation();
     this.inputText = '';
-    this.chat.sendMessage(text);
+    this.pendingImages.set([]);
+    this.chat.sendMessage(text, imgs.length ? imgs : undefined);
     setTimeout(() => this.resetHeight(), 0);
   }
 

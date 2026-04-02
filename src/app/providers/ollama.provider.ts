@@ -5,9 +5,10 @@ export class OllamaProvider implements AIProvider {
     const controller = new AbortController();
     const baseUrl = params.apiKey || 'http://localhost:11434';
 
+    const slim = params.messages.map(m => ({ role: m.role, content: m.content }));
     const messages = params.systemPrompt
-      ? [{ role: 'system', content: params.systemPrompt }, ...params.messages]
-      : params.messages;
+      ? [{ role: 'system', content: params.systemPrompt }, ...slim]
+      : slim;
 
     (async () => {
       try {

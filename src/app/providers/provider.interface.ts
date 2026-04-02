@@ -6,9 +6,17 @@ export type ProviderName =
   | 'ollama'
   | 'anthropic';
 
+/** Base64 payload (no `data:` prefix) for vision APIs (e.g. OpenRouter). */
+export interface ImageAttachment {
+  mimeType: string;
+  base64: string;
+}
+
 export interface Message {
   role: 'user' | 'assistant' | 'system';
   content: string;
+  /** User turns only — OpenRouter vision (data URLs built in provider). */
+  images?: ImageAttachment[];
 }
 
 export interface SendMessageParams {

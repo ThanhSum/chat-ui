@@ -10,9 +10,10 @@ export class OpenAIProvider implements AIProvider {
       dangerouslyAllowBrowser: true,
     });
 
+    const slim = params.messages.map(m => ({ role: m.role, content: m.content }));
     const messages = params.systemPrompt
-      ? [{ role: 'system' as const, content: params.systemPrompt }, ...params.messages]
-      : params.messages;
+      ? [{ role: 'system' as const, content: params.systemPrompt }, ...slim]
+      : slim;
 
     (async () => {
       try {

@@ -1,12 +1,36 @@
-import { AIProvider, SendMessageParams } from './provider.interface';
+import { AIProvider, Message, SendMessageParams } from './provider.interface';
+
+/** OpenAI-compatible chat message (OpenRouter). */
+function toOpenRouterMessage(m: Message): { role: string; content: string | object[] } {
+  if (m.role === 'system') {
+    return { role: 'system', content: m.content };
+  }
+  if (m.role === 'assistant') {
+    return { role: 'assistant', content: m.content };
+  }
+  const imgs = m.images ?? [];
+  if (imgs.length === 0) {
+    return { role: 'user', content: m.content };
+  }
+  const parts: object[] = [];
+  if (m.content.trim()) {
+    parts.push({ type: 'text', text: m.content });
+  }
+  for (const img of imgs) {
+    const url = `data:${img.mimeType};base64,${img.base64}`;
+    parts.push({ type: 'image_url', image_url: { url } });
+  }
+  return { role: 'user', content: parts };
+}
 
 export class OpenRouterProvider implements AIProvider {
   sendMessage(params: SendMessageParams): AbortController {
     const controller = new AbortController();
 
+    const mapped = params.messages.map(toOpenRouterMessage);
     const messages = params.systemPrompt
-      ? [{ role: 'system', content: params.systemPrompt }, ...params.messages]
-      : params.messages;
+      ? [{ role: 'system', content: params.systemPrompt }, ...mapped]
+      : mapped;
 
     (async () => {
       try {

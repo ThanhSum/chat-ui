@@ -1,7 +1,7 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { StorageService } from './storage.service';
 import { SettingsService } from './settings.service';
-import { ProviderName, PROVIDER_LABELS } from '../providers/provider.interface';
+import { ImageAttachment, Message, ProviderName, PROVIDER_LABELS } from '../providers/provider.interface';
 import { getProvider } from '../providers/provider.index';
 
 export interface OllamaModelMeta {
@@ -13,6 +13,8 @@ export interface ChatMessage {
   id: string;
   role: 'user' | 'assistant';
   content: string;
+  /** OpenRouter vision — user messages only */
+  attachments?: ImageAttachment[];
   timestamp: number;
   durationMs?: number;
   editedAt?: number;
@@ -130,9 +132,29 @@ export class ChatService {
     this.sendMessage(newContent);
   }
 
-  sendMessage(userText: string): void {
+  sendMessage(userText: string, imageAttachments?: ImageAttachment[]): void {
     const conv = this.activeConversation();
     if (!conv || this.isStreaming()) return;
+
+    const text = userText.trim();
+    const imgs = imageAttachments ?? [];
+    if (!text && imgs.length === 0) return;
+
+    const hasImagesInHistory = conv.messages.some(
+      m => m.role === 'user' && (m.attachments?.length ?? 0) > 0
+    );
+    if (conv.provider !== 'openrouter') {
+      if (imgs.length > 0) {
+        this.error.set('Image attachments are only supported with OpenRouter. Switch provider to OpenRouter in the sidebar.');
+        return;
+      }
+      if (hasImagesInHistory) {
+        this.error.set(
+          'This conversation contains images. Switch the provider to OpenRouter to continue, or start a new chat.'
+        );
+        return;
+      }
+    }
 
     const s = this.settingsSvc.settings();
     const apiKey = this.settingsSvc.getApiKey(conv.provider);
@@ -141,7 +163,8 @@ export class ChatService {
     const userMsg: ChatMessage = {
       id: crypto.randomUUID(),
       role: 'user',
-      content: userText,
+      content: text,
+      ...(imgs.length ? { attachments: imgs } : {}),
       timestamp: Date.now(),
     };
 
@@ -155,18 +178,22 @@ export class ChatService {
     this.updateConversation(conv.id, c => ({
       ...c,
       messages: [...c.messages, userMsg, assistantMsg],
-      title: c.messages.length === 0 ? userText.slice(0, 40) : c.title,
+      title: c.messages.length === 0 ? (text.slice(0, 40) || (imgs.length ? 'Image' : 'New Chat')) : c.title,
       updatedAt: Date.now(),
     }));
 
     this.isStreaming.set(true);
     this.error.set(null);
 
-    const historyMessages = conv.messages.map(m => ({
+    const historyMessages: Message[] = conv.messages.map(m => ({
       role: m.role as 'user' | 'assistant',
       content: m.content,
+      ...(m.role === 'user' && m.attachments?.length ? { images: m.attachments } : {}),
     }));
-    const allMessages = [...historyMessages, { role: 'user' as const, content: userText }];
+    const allMessages: Message[] = [
+      ...historyMessages,
+      { role: 'user', content: text, ...(imgs.length ? { images: imgs } : {}) },
+    ];
 
     const effectiveApiKey = conv.provider === 'ollama'
       ? this.settingsSvc.settings().ollamaBaseUrl
@@ -251,7 +278,9 @@ export class ChatService {
     const lastUserMsg = [...msgs].reverse().find(m => m.role === 'user');
     this.updateConversation(conv.id, c => ({ ...c, messages: c.messages.slice(0, -1) }));
     this.persist();
-    if (lastUserMsg) this.sendMessage(lastUserMsg.content);
+    if (lastUserMsg) {
+      this.sendMessage(lastUserMsg.content, lastUserMsg.attachments);
+    }
   }
 
   deleteMessage(convId: string, msgId: string): void {

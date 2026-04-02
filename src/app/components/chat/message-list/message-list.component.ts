@@ -71,6 +71,8 @@ export class MessageListComponent implements AfterViewChecked {
   /** User is within NEAR_BOTTOM_PX of the bottom — new content should keep them pinned. */
   private allowAutoScroll = true;
   private lastConvId: string | null = null;
+  /** Previous `isStreaming` — detect start of a new send so we scroll to latest again. */
+  private wasStreaming = false;
   showScrollToBottom = false;
 
   ngAfterViewChecked(): void {
@@ -78,16 +80,24 @@ export class MessageListComponent implements AfterViewChecked {
     const el = this.scrollContainer?.nativeElement;
     if (!el) return;
 
+    const streaming = this.chat.isStreaming();
+    if (streaming && !this.wasStreaming) {
+      // User just submitted (Enter) — always jump to latest for the new reply
+      this.allowAutoScroll = true;
+    }
+    this.wasStreaming = streaming;
+
     const convId = conv?.id ?? '';
     if (convId !== this.lastConvId) {
       this.lastConvId = convId;
       this.allowAutoScroll = true;
+      this.wasStreaming = streaming;
       el.scrollTop = el.scrollHeight;
       this.refreshScrollUi();
       return;
     }
 
-    if (this.chat.isStreaming() && this.allowAutoScroll) {
+    if (streaming && this.allowAutoScroll) {
       el.scrollTop = el.scrollHeight;
     }
 
